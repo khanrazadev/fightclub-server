@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Set the strictQuery option to false to suppress the deprecation warning
 mongoose.set("strictQuery", false);
 
 export const connectDB = async () => {
