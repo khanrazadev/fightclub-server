@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import ErrorMiddleware from "./middlewares/Error.js";
+import cookieParser from "cookie-parser";
 
 config({
   path: "./config/config.env",
@@ -12,6 +13,7 @@ app.use(
     extended: true,
   })
 );
+app.use(cookieParser());
 
 // Importing & using Routes
 import course from "./routes/courseRoutes.js";
