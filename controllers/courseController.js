@@ -3,8 +3,22 @@ import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "cloudinary";
-export const getAllCourses = catchAsyncError(async (req, res, nxt) => {
-  const courses = await Course.find().select("-lectures");
+import { Stats } from "../models/Stats.js";
+
+export const getAllCourses = catchAsyncError(async (req, res, next) => {
+  const keyword = req.query.keyword || "";
+  const category = req.query.category || "";
+
+  const courses = await Course.find({
+    title: {
+      $regex: keyword,
+      $options: "i",
+    },
+    category: {
+      $regex: category,
+      $options: "i",
+    },
+  }).select("-lectures");
   res.status(200).json({
     success: true,
     courses,
@@ -138,4 +152,21 @@ export const deleteLecture = catchAsyncError(async (req, res, next) => {
     success: true,
     message: "Lecture Deleted Successfully",
   });
+});
+
+//mongo watcher
+Course.watch().on("change", async () => {
+  const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(1);
+
+  const courses = await Course.find({});
+
+  let totalViews = 0;
+
+  for (let i = 0; i < courses.length; i++) {
+    totalViews += courses[i].views;
+  }
+  stats[0].views = totalViews;
+  stats[0].createdAt = new Date(Date.now());
+
+  await stats[0].save();
 });
