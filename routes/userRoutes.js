@@ -2,7 +2,10 @@ import express from "express";
 import {
   addToPlaylist,
   changePassword,
+  deleteMyProfile,
+  deleteUser,
   forgetPassword,
+  getAllUsers,
   getMyProfile,
   login,
   logout,
@@ -10,9 +13,10 @@ import {
   removeFromPlaylist,
   resetPassword,
   updateProfile,
+  updateUserRole,
   updateprofilepicture,
 } from "../controllers/userController.js";
-import { isAuthenticated } from "../middlewares/auth.js";
+import { authorizeAdmin, isAuthenticated } from "../middlewares/auth.js";
 import singleUpload from "../middlewares/multer.js";
 
 const router = express.Router();
@@ -28,6 +32,7 @@ router.route("/logout").get(logout);
 
 //get my profile
 router.route("/me").get(isAuthenticated, getMyProfile);
+router.route("/me").delete(isAuthenticated, deleteMyProfile);
 
 //change password
 router.route("/changepassword").put(isAuthenticated, changePassword);
@@ -51,5 +56,15 @@ router.route("/addtoplaylist").post(isAuthenticated, addToPlaylist);
 
 //remove from playlist
 router.route("/removefromplaylist").delete(isAuthenticated, removeFromPlaylist);
+
+//Admin routes
+//get all user
+router.route("/admin/users").get(isAuthenticated, authorizeAdmin, getAllUsers);
+
+//update user role
+router
+  .route("/admin/user/:id")
+  .get(isAuthenticated, authorizeAdmin, updateUserRole)
+  .delete(isAuthenticated, authorizeAdmin, deleteUser);
 
 export default router;
