@@ -11,14 +11,15 @@ export const buySubscription = catchAsyncError(async (req, res, next) => {
   if (user.role === "admin")
     return next(new ErrorHandler("Admin can't buy subscription", 400));
 
+  // Get the plan ID from environment variables or use a default one
   const plan_id = process.env.PLAN_ID || "plan_MHYBrhWFTEvNiw";
 
+  // Create a subscription with the specified plan for the user
   const subscription = await instance.subscriptions.create({
     plan_id,
     customer_notify: 1,
     total_count: 12,
   });
-
   user.subscription.id = subscription.id;
 
   user.subscription.status = subscription.status;
@@ -31,6 +32,7 @@ export const buySubscription = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Method to handle payment verification after a successful subscription purchase
 export const paymentVerification = catchAsyncError(async (req, res, next) => {
   const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
     req.body;

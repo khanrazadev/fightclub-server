@@ -21,6 +21,7 @@ export const contact = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Method to handle course request submission
 export const courseRequest = catchAsyncError(async (req, res, next) => {
   const { name, email, course } = req.body;
   if (!name || !email || !course)
@@ -38,6 +39,7 @@ export const courseRequest = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Method to get dashboard statistics for the last 12 records
 export const getDashboardStats = catchAsyncError(async (req, res, next) => {
   const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(12);
 
@@ -46,8 +48,9 @@ export const getDashboardStats = catchAsyncError(async (req, res, next) => {
   for (let i = 0; i < stats.length; i++) {
     statsData.unshift(stats[i]);
   }
-  const requiredSize = 12 - stats.length;
 
+  // Fill in missing records to make the statsData array of size 12
+  const requiredSize = 12 - stats.length;
   for (let i = 0; i < requiredSize; i++) {
     statsData.unshift({
       users: 0,

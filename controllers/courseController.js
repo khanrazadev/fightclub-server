@@ -5,10 +5,12 @@ import getDataUri from "../utils/dataUri.js";
 import cloudinary from "cloudinary";
 import { Stats } from "../models/Stats.js";
 
+// Method to get all courses with optional filtering by keyword and category
 export const getAllCourses = catchAsyncError(async (req, res, next) => {
   const keyword = req.query.keyword || "";
   const category = req.query.category || "";
 
+  // Fetch courses from the database based on provided keyword and category
   const courses = await Course.find({
     title: {
       $regex: keyword,
@@ -33,10 +35,13 @@ export const createCourse = catchAsyncError(async (req, res, next) => {
 
   const file = req.file;
 
+  // Get the file (poster image) from the request
   const fileUri = getDataUri(file);
 
+  // Upload the poster image to cloudinary
   const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
+  // Create a new course in the database with the provided data
   await Course.create({
     title,
     description,
@@ -54,6 +59,7 @@ export const createCourse = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Method to get all lectures of a course by its ID
 export const getCourseLectures = catchAsyncError(async (req, res, next) => {
   const course = await Course.findById(req.params.id);
   if (!course) return next(new ErrorHandler("Course not found", 404));
@@ -154,7 +160,7 @@ export const deleteLecture = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//mongo watcher
+// Method to update the statistics for the total views of all courses using MongoDB change streams
 Course.watch().on("change", async () => {
   const stats = await Stats.find({}).sort({ createdAt: "desc" }).limit(1);
 

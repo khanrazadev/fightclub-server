@@ -73,6 +73,7 @@ export const logout = catchAsyncError(async (req, res, next) => {
     });
 });
 
+// Method to get the user's own profile
 export const getMyProfile = catchAsyncError(async (req, res, next) => {
   // Find the user by their ID (assuming it's stored in req.user._id)
   const user = await User.findById(req.user._id);

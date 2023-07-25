@@ -15,6 +15,7 @@ export const isAuthenticated = catchAsyncError(async (req, res, next) => {
   next();
 });
 
+// Middleware to authorize access for subscribers only
 export const authorizeSubscribers = (req, res, next) => {
   if (req.user.subscription.status !== "active" && req.user.role !== "admin")
     return next(
