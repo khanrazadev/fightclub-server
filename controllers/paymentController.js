@@ -37,10 +37,10 @@ export const buySubscription = catchAsyncError(async (req, res, next) => {
 
 // // Method to handle payment verification after a successful subscription purchase
 export const paymentVerification = catchAsyncError(async (req, res, next) => {
-  // const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
-  //   req.body;
+  const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
+    req.body;
 
-  const user = await User.findById(req.user._id);
+  // const user = await User.findById(req.user._id);
 
   // const subscription_id = user.subscription.id;
 
@@ -61,9 +61,9 @@ export const paymentVerification = catchAsyncError(async (req, res, next) => {
     razorpay_subscription_id,
   });
 
-  user.subscription.status = "active";
+  // user.subscription.status = "active";
 
-  await user.save();
+  // await user.save();
 
   // res.redirect(
   //   `${process.env.FRONTEND_URL}/paymentsuccess?reference=${razorpay_payment_id}`
