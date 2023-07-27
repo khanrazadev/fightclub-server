@@ -35,23 +35,19 @@ export const buySubscription = catchAsyncError(async (req, res, next) => {
 });
 
 
-// // Method to handle payment verification after a successful subscription purchase
+// Method to handle payment verification after a successful subscription purchase
 export const paymentVerification = catchAsyncError(async (req, res, next) => {
   const { razorpay_signature, razorpay_payment_id, razorpay_subscription_id } =
     req.body;
 
-  // const user = await User.findById(req.user._id);
+  const generated_signature = crypto
+    .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
+    .update(razorpay_payment_id + "|" + razorpay_subscription_id)
+    .digest("hex");
 
-  // const subscription_id = user.subscription.id;
+  const isAuthentic = generated_signature === razorpay_signature;
 
-  // const generated_signature = crypto
-  //   .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
-  //   .update(razorpay_payment_id + "|" + razorpay_subscription_id)
-  //   .digest("hex");
-
-  // const isAuthentic = generated_signature === razorpay_signature;
-
-  if (!req.body)
+  if (!isAuthentic)
     return res.redirect(`${process.env.FRONTEND_URL}/paymentfail`);
 
   // database comes here
@@ -60,10 +56,6 @@ export const paymentVerification = catchAsyncError(async (req, res, next) => {
     razorpay_payment_id,
     razorpay_subscription_id,
   });
-
-  // user.subscription.status = "active";
-
-  // await user.save();
 
   res.redirect(
     `${process.env.FRONTEND_URL}/paymentsuccess?reference=${razorpay_payment_id}`
