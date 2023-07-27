@@ -14,7 +14,7 @@ const router = express.Router();
 router.route("/subscribe").get(isAuthenticated, buySubscription);
 
 //Payment verification
-router.route("/paymentverification").post( paymentVerification);
+router.route("/paymentverification").post( isAuthenticated,paymentVerification);
 
 //Get razorpay key
 router.route("/razorpaykey").get(getRazorPayKey);
