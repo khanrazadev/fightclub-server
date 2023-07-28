@@ -43,7 +43,7 @@ export const paymentVerification = catchAsyncError(async (req, res, next) => {
 
   const user = await User.findById(req.user?._id);
 
-  const subscription_id = user?.subscription?.id;
+  const subscription_id = user.subscription?.id;
 
   const generated_signature = crypto
     .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
@@ -64,7 +64,7 @@ export const paymentVerification = catchAsyncError(async (req, res, next) => {
 
   user.subscription.status = "active";
 
-  await user?.save();
+  await user.save();
 
   res.redirect(
     `${process.env.FRONTEND_URL}/paymentsuccess?reference=${razorpay_payment_id}`
