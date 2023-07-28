@@ -64,7 +64,7 @@ router.route("/admin/users").get(isAuthenticated, authorizeAdmin, getAllUsers);
 //update user role
 router
   .route("/admin/user/:id")
-  .get(isAuthenticated, authorizeAdmin, updateUserRole)
+  .put(isAuthenticated, authorizeAdmin, updateUserRole)
   .delete(isAuthenticated, authorizeAdmin, deleteUser);
 
 export default router;
